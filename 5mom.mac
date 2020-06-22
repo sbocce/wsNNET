@@ -1,0 +1,51 @@
+/* This is a Maxima file. */
+/* Load this using batchload("...") */
+/* This file computes the Jacobian and writes it in Fortran90 style, so that it can be copyed */
+/* into a f90 program. */
+
+load(f90);
+
+/* Closure */
+
+rstar: r*(rho/P)^2/rho;
+qstar: q*(rho/P)^(3/2)/rho;
+sig: (3 - rstar + sqrt( (3 - rstar)^2 + 8*qstar^2 ))/4;
+
+sstar: qstar^3/sig^2 + (10 - 8*sig^(1/2))*qstar;
+s: sstar*rho*(P/rho)^(5/2);
+
+/* Conserved variables */
+
+U1: rho;
+U2: rho*u;
+U3: rho*u^2 + P;
+U4: rho*u^3 + 3*u*P + q;
+U5: rho*u^4 + 6*u^2*P + 4*u*q + r;
+
+/* Fluxes */
+
+F1: rho*u;
+F2: rho*u^2 + P;
+F3: rho*u^3 + 3*u*P + q;
+F4: rho*u^4 + 6*u^2*P + 4*u*q + r;
+F5: rho*u^5 + 10*u^3*P + 10*u^2*q + 5*u*r + s;
+
+dfdw: matrix([diff(F1,rho), diff(F1,u), diff(F1,P), diff(F1,q), diff(F1, r)],
+             [diff(F2,rho), diff(F2,u), diff(F2,P), diff(F2,q), diff(F2, r)],
+             [diff(F3,rho), diff(F3,u), diff(F3,P), diff(F3,q), diff(F3, r)],
+             [diff(F4,rho), diff(F4,u), diff(F4,P), diff(F4,q), diff(F4, r)],
+             [diff(F5,rho), diff(F5,u), diff(F5,P), diff(F5,q), diff(F5, r)]);
+
+dudw: matrix([diff(U1,rho), diff(U1,u), diff(U1,P), diff(U1,q), diff(U1, r)],
+             [diff(U2,rho), diff(U2,u), diff(U2,P), diff(U2,q), diff(U2, r)],
+             [diff(U3,rho), diff(U3,u), diff(U3,P), diff(U3,q), diff(U3, r)],
+             [diff(U4,rho), diff(U4,u), diff(U4,P), diff(U4,q), diff(U4, r)],
+             [diff(U5,rho), diff(U5,u), diff(U5,P), diff(U5,q), diff(U5, r)]);
+
+Jac: subst(0,u,dfdw).invert(subst(0,u,dudw)); /* Jacobian for u = 0. Matrix multiplication is operation "." */
+
+f90(Jac);
+
+/* Eigens */
+
+/* eivalues(Jac_eq); */
