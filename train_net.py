@@ -95,7 +95,7 @@ model.compile(optimizers.Adam(lr=0.005), loss=losses.mean_squared_error, metrics
 #### model.compile(optimizers.SGD(lr=0.01, momentum=0.3), loss=losses.mean_squared_logarithmic_error, metrics=['mse'])
 
 # Fit the Keras model on dataset
-history = model.fit(XY_train, ZZ_train, epochs=800, batch_size=10000, verbose=2)
+history = model.fit(XY_train, ZZ_train, epochs=2000, batch_size=10000, verbose=2)
 
 # Save model
 model.save('saved_keras_model.h5')
