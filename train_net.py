@@ -83,19 +83,21 @@ ZZ_train[:,1] = Z2_scal_train
 
 # Create neural net model with Keras
 model = Sequential()
-model.add(Dense(5, input_dim=2, activation = 'tanh'))
-model.add(Dense(10, activation = 'tanh'))
-model.add(Dense(5, activation='tanh'))
+model.add(Dense(8, input_dim=2, activation = 'tanh'))
+model.add(Dense(20, activation = 'tanh'))
+model.add(Dense(15, activation = 'tanh'))
+model.add(Dense(8, activation='tanh'))
 model.add(Dense(2, activation='linear'))
 
 # Compile the Keras model
 #### model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.compile(optimizers.Adam(lr=0.005), loss=losses.mean_squared_error, metrics=['mse'])
+#model.compile(optimizers.Adam(lr=0.005), loss=losses.mean_squared_error, metrics=['mse'])
+model.compile(optimizers.Adam(lr=0.0001), loss=losses.mean_squared_error, metrics=['mse'])
 #### model.compile(optimizers.SGD(lr=0.01, momentum=0.3), loss=losses.mean_absolute_error, metrics=['mse'])
 #### model.compile(optimizers.SGD(lr=0.01, momentum=0.3), loss=losses.mean_squared_logarithmic_error, metrics=['mse'])
 
 # Fit the Keras model on dataset
-history = model.fit(XY_train, ZZ_train, epochs=2000, batch_size=10000, verbose=2)
+history = model.fit(XY_train, ZZ_train, validation_split=0.01, epochs=800, batch_size=1000, verbose=2, shuffle=True)
 
 # Save model
 model.save('saved_keras_model.h5')
@@ -104,10 +106,26 @@ model.save('saved_keras_model.h5')
 _, accuracy = model.evaluate(XY_train,ZZ_train)
 print('Accuracy: %.5f %%' %(accuracy*100))
 
+# Print history
+print(history)
+
 # # PLOT FITTING HISTORY
 # plt.title('Loss / Mean Squared Error')
-# plt.plot(history.history['loss'], label='train')
-# plt.plot(history.history['val_loss'], label='test')
-# plt.legend()
+plt.semilogy(history.history['loss'], label='train')
+plt.semilogy(history.history['val_loss'], label='test')
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# 
+
+# # summarize history for accuracy
+# plt.plot(history.history['accuracy'])
+# plt.plot(history.history['val_accuracy'])
+# plt.title('model accuracy')
+# plt.ylabel('accuracy')
+# plt.xlabel('epoch')
+# plt.legend(['train', 'test'], loc='upper left')
 # plt.show()
 # 

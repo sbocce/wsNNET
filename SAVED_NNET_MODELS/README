@@ -1,0 +1,24 @@
+
+This folder contains some trained models for the neural net, saved from Keras in h5 format.
+In the IMGS folder, some plots of the error. 
+
+############
+
+The models are trained in the interval q_star in (-70,70) and sigma in (1E-5, 1).
+These variables are transformed into theta = asinh(10000*q_star) and xi = log10(sigma).
+Therefore the actual range is:
+theta in (-14.1519827945... , 14.1519827945...)
+and 
+xi in (-5, 0).
+
+############
+
+The neural net models can be evaluated using Octave. As an example, refer to the scripts in the uplevel directory:
+
+- octaLoadAndUseNet.m
+- apply_saved_net.m
+
+
+
+
+

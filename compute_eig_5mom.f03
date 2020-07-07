@@ -352,7 +352,7 @@ DO jj = 1, numSigma
       eigProcessed(eig_ID) = DSIGN( SQRT(eigReal(eig_ID)**2 + eigImag(eig_ID)**2)  , eigReal(eig_ID))
     END DO
   
-    PRINT*, "  ", th_vect(kk), ",  ", xi_vect(jj), ",  ", LOG10(MAXVAL(eigProcessed)), ",  ", -LOG10(-MINVAL(eigProcessed))
+    PRINT*, "  ", th_vect(kk), ",  ", xi_vect(jj), ",  ", LOG10(MAXVAL(eigProcessed) + 1), ",  ", -LOG10(-MINVAL(eigProcessed) + 1)
 
   END DO
 

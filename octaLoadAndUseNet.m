@@ -4,6 +4,7 @@ clc
 
 % +++++++++++++++ Load training data (starting solution) +++++++++++++++++
 
+% PUT HERE THE NUMBER OF POINTS USED FOR TESTING, AKA THE POINTS IN THE FILE "outp_TEST,csv" 
 Nth = 100;
 Nxi = 100; % I probably removed one sigma!
 
@@ -24,9 +25,9 @@ eigg1_max = max(eigg1);
 eigg2_min = min(eigg2);
 eigg2_max = max(eigg2);
 
-% OLD SCALING 0 to 1 %%% th   = (th   - min(th))/(max(th) - min(th));
-% OLD SCALING 0 to 1 %%% xi   = (xi   - min(xi))/(max(xi) - min(xi));
-% OLD SCALING 0 to 1 %%% eigg = (eigg - min(eigg))/(max(eigg) - min(eigg));
+%%% OLD %%% SCALING 0 to 1 %%% th   = (th   - min(th))/(max(th) - min(th));
+%%% OLD %%% SCALING 0 to 1 %%% xi   = (xi   - min(xi))/(max(xi) - min(xi));
+%%% OLD %%% SCALING 0 to 1 %%% eigg = (eigg - min(eigg))/(max(eigg) - min(eigg));
 
 % Scaling from -1 to 1
 th    = 2*(th    - min(th))/(max(th) - min(th)) - 1;
@@ -56,9 +57,12 @@ XI_TEST = XI;
 % +++++++++++++++ LOAD NEURAL NET +++++++++++++++++++
 model = load('saved_keras_model.h5');
 
-% Say something on the structure of the net
-% activations = {'tanh', 'tanh', 'tanh', 'tanh', 'linear'};
-activations = {'tanh', 'tanh', 'tanh', 'linear'};
+% Say something on the structure of the net and the activation function of each layer.
+% This info should be saved inside the "saved_keras_model.h5" but Octave has some issues
+% in extracting it
+
+activations = {'tanh', 'tanh', 'tanh', 'tanh', 'linear'}; % USE THIS FOR 4-hidden-layer nets
+% activations = {'tanh', 'tanh', 'tanh', 'linear'}; % USE THIS FOR 3-hidden-layer nets
 
 NNetPredic1 = zeros(size(TH_TEST));
 NNetPredic2 = zeros(size(TH_TEST));
@@ -67,26 +71,30 @@ for ii = 1:numel(NNetPredic1) % Access elements one by one
   [NNetPredic1(ii), NNetPredic2(ii)] = apply_saved_net(model, activations, [TH_TEST(ii); XI_TEST(ii)]);
 end
 
-% Compute error
-% Rescale the values
-NNetPredic1_SCALEBACK = 10.^((NNetPredic1 + 1)/2*(eigg1_max - eigg1_min) + eigg1_min);
-EIGG1_SCALEBACK       = 10.^((EIGG1+1)/2*(eigg1_max - eigg1_min) + eigg1_min);
+% +++++++++ Compute error ++++++++++
 
-NNetPredic2_SCALEBACK = 10.^((NNetPredic2 + 1)/2*(eigg2_max - eigg2_min) + eigg2_min);
-EIGG2_SCALEBACK       = 10.^((EIGG2+1)/2*(eigg2_max - eigg2_min) + eigg2_min);
+% The neural net predictions are done on the LOG_10 OF THE WAVESPEEDS.
+% Therefore the error is not what we directly see. We should rescale the values before computing
+% the error. See the paper for more information.
+NNetPredic1_SCALEBACK = 10.^((NNetPredic1 + 1)/2*(eigg1_max - eigg1_min) + eigg1_min) - 1;
+EIGG1_SCALEBACK       = 10.^((EIGG1+1)/2*(eigg1_max - eigg1_min) + eigg1_min) - 1;
 
-% SCALING 0 to 1 %%% NNetPredic_SCALEBACK = 10.^(NNetPredic*(eigg_max - eigg_min) + eigg_min);
-% SCALING 0 to 1 %%% EIGG_SCALEBACK       = 10.^(EIGG*(eigg_max - eigg_min) + eigg_min);
+NNetPredic2_SCALEBACK = - 10.^(-( (NNetPredic2 + 1)/2*(eigg2_max - eigg2_min) + eigg2_min)) + 1;
+EIGG2_SCALEBACK       = - 10.^(-( (EIGG2+1)/2*(eigg2_max - eigg2_min) + eigg2_min)) + 1;
 
 Err1 = (NNetPredic1_SCALEBACK - EIGG1_SCALEBACK)./(EIGG1_SCALEBACK + 1.0e-15);
 Err2 = (NNetPredic2_SCALEBACK - EIGG2_SCALEBACK)./(EIGG2_SCALEBACK + 1.0e-15);
 
-% Err = (NNetPredic - EIGG)./(EIGG + 0.0001);
-
-% NONONONONONONON TO BE COMPUTED ON RESCALED DATA!!!!!!!
-% NONONONONONONON TO BE COMPUTED ON RESCALED DATA!!!!!!!
-
 % +++++++++++++++ PLOT +++++++++++++++++++++++++++++
+
+TH_TEST = TH_TEST(:,1:end-1);
+XI_TEST = XI_TEST(:,1:end-1);
+Err1    = Err1(:,1:end-1);
+Err2    = Err2(:,1:end-1);
+NNetPredic1 = NNetPredic1(:,1:end-1);
+NNetPredic2 = NNetPredic2(:,1:end-1);
+
+
 figure
 surf(TH_TEST,XI_TEST,NNetPredic1)
 xlabel('theta')
@@ -129,10 +137,37 @@ ylabel('xi')
 title('Error [\%] in min WS (real scale) dimensionless eig)')
 
 
+%%%%%%%%
+
+figure, contourf(TH_TEST, XI_TEST, abs(Err1)*100.*(abs(Err1)<0.2), 10, 'k', 'linewidth', 1.5)
+caxis([-3,10])
+colormap(ocean)
+
+
+%%%%%%%
+
+
+figure
+surf(TH_TEST,XI_TEST,NNetPredic1)
+xlabel('theta')
+ylabel('xi = log10(sigma)')
+zlabel('Predicted max WS')
+
+hold on
+steppp = 15;
+plot3(th(1:steppp:end), xi(1:steppp:end), eigg1(1:steppp:end), 'or', 'linewidth',2)
+% zlim([-0.1,1])
+view([200,30])
+
+
+
 fprintf('+++++++++++++++++++++++++++++++++++++++++++\n')
 fprintf('++++++++ PRESS RETURN TO EXIT +++++++++++++\n')
 fprintf('+++++++++++++++++++++++++++++++++++++++++++\n')
 pause()
+
+
+
 
 % 
 % 

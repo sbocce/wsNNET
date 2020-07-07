@@ -22,11 +22,11 @@ echo '> Computing some data near equilibrium ...'
 
 q_MIN=-0.0011  # th = -3.1
 q_MAX=0.0011   # th = 3.1
-Nq=700
+Nq=400
 
 sig_MIN=0.00001
 sig_MAX=0.0001
-Nsig=700
+Nsig=400
 
 ./a.out $q_MIN $q_MAX $Nq $sig_MIN $sig_MAX $Nsig > outp_TRAIN.csv
 
@@ -38,11 +38,11 @@ echo '> Computing some data very close to equilibrium ...'
 
 q_MIN=-0.00005 # theta = -0.48
 q_MAX=0.00005  # theta = 0.48
-Nq=500
+Nq=400
 
 sig_MIN=0.00001
 sig_MAX=0.00005
-Nsig=500
+Nsig=400
 
 ./a.out $q_MIN $q_MAX $Nq $sig_MIN $sig_MAX $Nsig >> outp_TRAIN.csv
 
@@ -54,11 +54,11 @@ echo '> Computing more data in the whole range...'
 
 q_MIN=-70.0
 q_MAX=70.0
-Nq=600
+Nq=800
 
 sig_MIN=0.00001
 sig_MAX=1.0
-Nsig=600
+Nsig=800
 
 ./a.out $q_MIN $q_MAX $Nq $sig_MIN $sig_MAX $Nsig >> outp_TRAIN.csv
 
@@ -70,13 +70,64 @@ echo '> Computing even more data, now in the high-sigma region...'
 
 q_MIN=-70.0
 q_MAX=70.0
-Nq=1000
+Nq=3000
 
 sig_MIN=0.7
+sig_MAX=1.0
+Nsig=300
+
+./a.out $q_MIN $q_MAX $Nq $sig_MIN $sig_MAX $Nsig >> outp_TRAIN.csv
+
+# ~~~~~~~~~~~~
+# ~~~~~~~~~~~~
+# ~~~~~~~~~~~~
+
+echo '> Computing even more data, now in the high-sigma region, again...'
+
+q_MIN=-70.0
+q_MAX=-10.0
+Nq=3000
+
+sig_MIN=0.95
 sig_MAX=1.0
 Nsig=200
 
 ./a.out $q_MIN $q_MAX $Nq $sig_MIN $sig_MAX $Nsig >> outp_TRAIN.csv
+
+# ~~~~~~~~~~~~
+# ~~~~~~~~~~~~
+# ~~~~~~~~~~~~
+
+echo '> Computing even more data, now in the high-sigma region, again...'
+
+q_MIN=10.0
+q_MAX=70.0
+Nq=3000
+
+sig_MIN=0.95
+sig_MAX=1.0
+Nsig=200
+
+./a.out $q_MIN $q_MAX $Nq $sig_MIN $sig_MAX $Nsig >> outp_TRAIN.csv
+
+
+# ~~~~~~~~~~~~
+# ~~~~~~~~~~~~
+# ~~~~~~~~~~~~
+
+echo '> Computing some additional data, a slice around sigma = 1e-5 ...'
+
+
+q_MIN=-70.0 # theta = -0.732
+q_MAX=70.0  # theta = 0.732
+Nq=3000
+
+sig_MIN=0.00001
+sig_MAX=0.0001
+Nsig=300
+
+./a.out $q_MIN $q_MAX $Nq $sig_MIN $sig_MAX $Nsig >> outp_TRAIN.csv
+
 
 # ~~~~~~~~~~~~
 # ~~~~~~~~~~~~
@@ -87,11 +138,11 @@ echo '> Computing some last data, very close to equilibrium ...'
 
 q_MIN=-0.00008 # theta = -0.732
 q_MAX=0.00008  # theta = 0.732
-Nq=500
+Nq=320
 
 sig_MIN=0.00001
 sig_MAX=0.00004
-Nsig=500
+Nsig=320
 
 ./a.out $q_MIN $q_MAX $Nq $sig_MIN $sig_MAX $Nsig >> outp_TRAIN.csv
 

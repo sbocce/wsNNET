@@ -9,6 +9,15 @@
 
 The file 5mom.mac computes the analytical Jacobian with symbolic computation, by using Maxima. 
 The Jacobian is then implemented into the compute_eig_5mom.f90, that uses LAPACK to compute its eigenvalues.
+The directory "SAVED_NNET_MODELS" stores models trained to fit the 5 moments system, in the range:
+q_star in (-70,70)
+and sigma in (1e-5, 1).
+
+The TOOLS directory contains some Octave tools such as a script to convert a neural net keras model into 
+Fortran matrices.
+
+The rest of this file describes how to run the whole process training of a neural network: generation of data, 
+training and verification.
 
 ############################################
 # RUNNING THE WHOLE PROCESS

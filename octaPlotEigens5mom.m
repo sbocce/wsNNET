@@ -4,14 +4,14 @@ clc
 
 % LOad data
 
-dd = load('outp.csv');
+dd = load('outp_TEST.csv');
 
 th_vect  = dd(:,1);
 sig_vect = dd(:,2);
 maxEig   = dd(:,3);
 minEig   = dd(:,4);
 
-Nq = 300;
+Nq = 100;
 Nsig = 100;
 
 TH  = reshape(th_vect,  Nq, Nsig);
