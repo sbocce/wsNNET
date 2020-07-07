@@ -8,7 +8,7 @@
 ! The program scales them by defining functions:
 !
 ! xi = log10 (sigma)
-! th = q + q/(A + abs(q))
+! th = asinh(10000 q_star)
 !
 ! Then points are computed by sampling uniformly xi and th from the minimum to the maximum
 ! value requested.
@@ -19,7 +19,7 @@
 ! The minimum eigenvalue is always negative, so before computing the log10 we change its sign.
 ! 
 ! OUTPUT:
-! th, xi, log10(MAX_eig), log10(-MIN_eig)
+! th, xi, log10(MAX_eig + 1), -log10(-MIN_eig + 1)
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
